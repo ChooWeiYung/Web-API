@@ -89,8 +89,11 @@
 </table>
 
 <script>
+  // ✅ BACKEND API BASE URL（真实 App Service）
+  const API_URL = "https://web-api-demo-fdhgcjf2hscehjdd.malaysiawest-01.azurewebsites.net/api.php";
+
   async function loadOrders() {
-    const res = await fetch("/api.php");
+    const res = await fetch(API_URL);
     const orders = await res.json();
 
     const tbody = document.querySelector("#ordersTable tbody");
@@ -128,8 +131,8 @@
       span.className = "status no-action";
     }
 
-    // ⚠️ 以后如果要回写状态
-    // fetch("/api.php", { method: "POST", body: ... })
+    // ✅ 之后如果你要把 status 写回 backend
+    // fetch(API_URL, { method: "POST", body: ... })
   }
 
   loadOrders();
