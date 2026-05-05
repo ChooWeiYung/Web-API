@@ -98,44 +98,54 @@
 </div>
 
 <script>
+  // ✅ BACKEND API BASE URL（真实 App Service）
+  const API_URL = "https://web-api-demo-fdhgcjf2hscehjdd.malaysiawest-01.azurewebsites.net/api.php";
+
   const prices = {
     plan: { basic: 50, standard: 100, premium: 200 },
     module: { basic: 0, full: 80 },
     support: { no: 0, yes: 50 }
   };
 
+  const plan = document.getElementById("plan");
+  const moduleEl = document.getElementById("module");
+  const support = document.getElementById("support");
   const priceEl = document.getElementById("price");
-  const selects = ["plan", "module", "support"].map(id => document.getElementById(id));
 
   function calculate() {
     const total =
       prices.plan[plan.value] +
-      prices.module[module.value] +
+      prices.module[moduleEl.value] +
       prices.support[support.value];
     priceEl.textContent = total;
   }
 
-  selects.forEach(el => el.addEventListener("change", calculate));
+  [plan, moduleEl, support].forEach(el =>
+    el.addEventListener("change", calculate)
+  );
   calculate();
 
   document.getElementById("orderForm").addEventListener("submit", async e => {
     e.preventDefault();
-    success.style.display = error.style.display = "none";
+    success.style.display = "none";
+    error.style.display = "none";
 
     const data = Object.fromEntries(new FormData(e.target).entries());
     data.totalPrice = priceEl.textContent;
 
     try {
-      const res = await fetch("/api.php", {
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
-      if (!res.ok) throw new Error();
+
+      if (!res.ok) throw new Error("Request failed");
       e.target.reset();
       calculate();
       success.style.display = "block";
-    } catch {
+    } catch (err) {
+      console.error(err);
       error.style.display = "block";
     }
   });
